@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "base/rand_util.h"
-#include "ppapi/c/dev/ppb_crypto_dev.h"
-#include "ppapi/thunk/thunk.h"
+#include <stdlib.h>
 
-// The crypto interface doesn't have a normal C -> C++ thunk since it doesn't
+#include "ppapi/c/dev/ppb_memory_dev.h"
+#include "ppapi/shared_impl/ppapi_shared_export.h"
+
+// The memory interface doesn't have a normal C -> C++ thunk since it doesn't
 // actually have any proxy wrapping or associated objects; it's just a call
 // into base. So we implement the entire interface here, using the thunk
 // namespace so it magically gets hooked up in the proper places.
@@ -15,20 +16,26 @@ namespace ppapi {
 
 namespace {
 
-void GetRandomBytes(char* buffer, uint32_t num_bytes) {
-  base::RandBytes(buffer, num_bytes);
+void* MemAlloc(uint32_t num_bytes) {
+  return malloc(num_bytes);
 }
 
-const PPB_Crypto_Dev crypto_interface = {
-  &GetRandomBytes
+void MemFree(void* ptr) {
+  free(ptr);
+}
+
+const PPB_Memory_Dev ppb_memory = {
+  &MemAlloc,
+  &MemFree
 };
 
 }  // namespace
 
 namespace thunk {
 
-PPAPI_THUNK_EXPORT const PPB_Crypto_Dev* GetPPB_Crypto_Dev_Thunk() {
-  return &crypto_interface;
+// static
+PPAPI_SHARED_EXPORT const PPB_Memory_Dev* GetPPB_Memory_Dev_Thunk() {
+  return &ppb_memory;
 }
 
 }  // namespace thunk
