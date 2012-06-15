@@ -8,18 +8,18 @@
   },
   'includes': [
     '../native_client/build/untrusted.gypi',
-    'ppapi_proxy.gypi',
+    'ppapi_shared.gypi',
   ],
   'conditions': [
     ['disable_nacl==0 and disable_nacl_untrusted==0', {
       'targets': [
         {
-          'target_name': 'ppapi_proxy_untrusted',
+          'target_name': 'ppapi_shared_untrusted',
           'type': 'none',
           'variables': {
-            'ppapi_proxy_target': 1,
+            'ppapi_shared_target': 1,
             'nacl_untrusted_build': 1,
-            'nlib_target': 'libppapi_proxy_untrusted.a',
+            'nlib_target': 'libppapi_shared_untrusted.a',
             'build_glibc': 0,
             'build_newlib': 1,
           },
@@ -27,7 +27,6 @@
             '<(DEPTH)/native_client/tools.gyp:prep_toolchain',
             '../base/base_untrusted.gyp:base_untrusted',
             '../ipc/ipc_untrusted.gyp:ipc_untrusted',
-            '../ppapi/ppapi_shared_untrusted.gyp:ppapi_shared_untrusted',
           ],
         },
       ],
